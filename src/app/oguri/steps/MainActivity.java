@@ -19,6 +19,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -176,8 +177,24 @@ public class MainActivity extends Activity {
         root.setPadding(dp(18), dp(22), dp(18), dp(22));
         scroll.addView(root);
 
-        TextView title = text("Oguri's Steps", 26, TEXT, true);
-        root.addView(title);
+        // Header row, same as Oguri's Alarms: app name left, the
+        // launcher icon at the top right.
+        LinearLayout headerRow = new LinearLayout(this);
+        headerRow.setOrientation(LinearLayout.HORIZONTAL);
+        headerRow.setGravity(Gravity.CENTER_VERTICAL);
+        root.addView(headerRow);
+        TextView title = text("Oguri's Steps", 30, TEXT, true);
+        title.setLayoutParams(new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        headerRow.addView(title);
+        try {
+            ImageView icon = new ImageView(this);
+            icon.setImageDrawable(getPackageManager().getApplicationIcon(
+                    getApplicationInfo()));
+            headerRow.addView(icon, new LinearLayout.LayoutParams(dp(48), dp(48)));
+        } catch (Exception ignored) {
+            // The icon is cosmetic only; the header works without it.
+        }
         String dateStr = new SimpleDateFormat("EEEE d MMMM", Locale.UK).format(new Date());
         TextView sub = text(dateStr, 14, MUTED, false);
         LinearLayout.LayoutParams subLp = new LinearLayout.LayoutParams(
