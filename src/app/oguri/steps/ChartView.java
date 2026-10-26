@@ -77,17 +77,35 @@ public class ChartView extends View {
         invalidate();
     }
 
+    private float downX;
+    private float downY;
+
     @Override
     public boolean onTouchEvent(MotionEvent e) {
+        // The DOWN must be consumed, or Android never delivers the rest
+        // of the gesture to this view (1.2 bug: taps did nothing).
+        if (e.getAction() == MotionEvent.ACTION_DOWN) {
+            downX = e.getX();
+            downY = e.getY();
+            return true;
+        }
         if (e.getAction() == MotionEvent.ACTION_UP && listener != null
                 && values.length > 0) {
+            float slop = 12f * getResources().getDisplayMetrics().density;
+            if (Math.abs(e.getX() - downX) > slop
+                    || Math.abs(e.getY() - downY) > slop) {
+                return true; // it was a scroll, not a tap
+            }
             float slot = (float) getWidth() / values.length;
             int idx = (int) (e.getX() / slot);
             if (idx >= 0 && idx < values.length) {
                 listener.onBarTapped(idx);
                 performClick();
-                return true;
             }
+            return true;
+        }
+        if (e.getAction() == MotionEvent.ACTION_CANCEL) {
+            return true;
         }
         return super.onTouchEvent(e);
     }
