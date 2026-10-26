@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Mockup renders of the proposed fixed History charts, using sample
-imported data (19-26 Oct 2026) from his screenshots. Design rules:
+data. Design rules:
 - Value labels only when bars are sparse (<=14 bars) or only the best bar.
 - Axis labels are real dates (d MMM), edge-clamped, never day-numbers.
 - 90 days aggregates to calendar-week bars with totals in k.

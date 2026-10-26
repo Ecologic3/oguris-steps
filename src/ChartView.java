@@ -9,8 +9,7 @@ import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.view.View;
 
-/** Bar chart for step history, final 1.2 design (approved from
- * renders): sparse real-date axis labels that never collide, value
+/** Bar chart for step history, final 1.2 design (approved from renders): sparse real-date axis labels that never collide, value
  * labels only where they fit, a dashed average line in the units of
  * the view, the best bar bold in amber (slightly wider, bold amber
  * label), today in bright green, and tap-to-inspect: tapping a bar
