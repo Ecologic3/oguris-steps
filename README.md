@@ -45,5 +45,9 @@ apksigner sign --ks oguris-steps.keystore --ks-key-alias oguris-steps \
     --out OgurisSteps-1.2.3.apk build/aligned.apk
 ```
 
+Notes: sources use anonymous inner classes only (no lambdas; they break
+the d8 step in this pipeline), and `classes.dex` must sit at the APK
+archive root, hence the zip from inside `build/dex`.
+
 The signing keystore is not in this repository. Package:
 `app.oguri.steps`, minSdk 29, targetSdk 34.
