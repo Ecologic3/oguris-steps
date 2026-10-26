@@ -8,8 +8,7 @@ from PIL import Image
 import numpy as np, colorsys, os
 
 APP = os.path.expanduser("~/workspace/steps-app")
-SRC = os.path.join(APP, "assets",
-    "media-generation-oguris-steps-icon-running-0-d9d6b135-e7fd-40cf-96f4-2f6546dc996e.webp")
+SRC = os.path.join(APP, "build", "icon-original.webp")
 OUT = os.path.join(APP, "build", "icon-source-purple.png")
 
 img = Image.open(SRC).convert("RGB")

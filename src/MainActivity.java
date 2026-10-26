@@ -571,13 +571,14 @@ public class MainActivity extends Activity {
         }
 
         // History rows, newest first. The best day of the current
-        // range is bold amber with a star.
+        // range is bold amber with a star. Days with no record are
+        // skipped entirely (no zero rows for the time before history
+        // starts); a recorded day shows even when its count is 0.
         historyList.removeAllViews();
-        boolean longRange = rangeDays == 0 || rangeDays > 30;
         for (int i = keys.size() - 1; i >= 0; i--) {
             int v = vals.get(i);
             boolean isToday = keys.get(i).equals(StepStore.todayKey());
-            if (longRange && v == 0 && !isToday) continue;
+            if (v == 0 && !isToday && !hist.containsKey(keys.get(i))) continue;
             historyList.addView(historyRow(keys.get(i), v, isToday,
                     keys.get(i).equals(bestDay) && best > 0));
         }
