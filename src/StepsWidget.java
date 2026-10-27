@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 /** 1x1 transparent widget, matched to the previous pedometer widget:
@@ -24,7 +25,13 @@ public class StepsWidget extends AppWidgetProvider {
     static RemoteViews buildViews(Context ctx) {
         StepStore store = new StepStore(ctx);
         RemoteViews views = new RemoteViews(ctx.getPackageName(), R.layout.widget_steps);
-        views.setTextViewText(R.id.widget_steps, String.valueOf(store.todaySteps()));
+        String count = String.valueOf(store.todaySteps());
+        views.setTextViewText(R.id.widget_steps, count);
+        // The count never wraps (maxLines=1 in the layout); instead it
+        // shrinks as it gains digits so 5+ digit days still fit the cell.
+        int digits = count.length();
+        float sp = digits <= 4 ? 30f : digits == 5 ? 24f : digits == 6 ? 20f : 17f;
+        views.setTextViewTextSize(R.id.widget_steps, TypedValue.COMPLEX_UNIT_SP, sp);
         Intent open = new Intent(ctx, MainActivity.class);
         open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pi = PendingIntent.getActivity(ctx, 0, open,

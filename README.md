@@ -35,14 +35,14 @@ export PATH="$JAVA_HOME/bin:$BT:$PATH"
 aapt2 compile --dir res -o build/res.zip
 aapt2 link -o build/unsigned.apk -I $ANDROID_JAR \
     --manifest AndroidManifest.xml --java build/gen \
-    --version-code 6 --version-name 1.2.3 build/res.zip
+    --version-code 7 --version-name 1.2.4 build/res.zip
 javac -encoding UTF-8 -source 8 -target 8 -cp $ANDROID_JAR \
     -d build/classes $(find src build/gen -name '*.java')
 d8 --min-api 29 --output build/dex $(find build/classes -name '*.class')
 (cd build/dex && zip ../unsigned.apk classes.dex)
 zipalign -f -p 4 build/unsigned.apk build/aligned.apk
 apksigner sign --ks oguris-steps.keystore --ks-key-alias oguris-steps \
-    --out OgurisSteps-1.2.3.apk build/aligned.apk
+    --out OgurisSteps-1.2.4.apk build/aligned.apk
 ```
 
 Notes: sources use anonymous inner classes only (no lambdas; they break
