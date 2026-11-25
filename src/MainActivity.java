@@ -35,7 +35,6 @@ import java.util.Map;
 
 public class MainActivity extends Activity {
     private static final int REQ_IMPORT = 7;
-    private static final int REQ_EXPORT_JSON = 8;
     private static final int BG = Color.rgb(0x0F, 0x14, 0x1F);
     private static final int CARD = Color.rgb(0x1B, 0x22, 0x33);
     private static final int TEXT = Color.WHITE;
@@ -93,23 +92,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQ_EXPORT_JSON) {
-            if (resultCode != RESULT_OK || data == null || data.getData() == null) return;
-            try {
-                String json = buildExportJson();
-                java.io.OutputStream out = getContentResolver()
-                        .openOutputStream(data.getData());
-                if (out == null) throw new java.io.IOException("no stream");
-                out.write(json.getBytes("UTF-8"));
-                out.close();
-                Toast.makeText(this, "Exported " + store.history().size()
-                        + " days of history", Toast.LENGTH_LONG).show();
-            } catch (Exception e) {
-                Toast.makeText(this, "Could not write that file",
-                        Toast.LENGTH_LONG).show();
-            }
-            return;
-        }
         if (requestCode != REQ_IMPORT || resultCode != RESULT_OK
                 || data == null || data.getData() == null) return;
         try {
@@ -131,33 +113,6 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
             Toast.makeText(this, "Could not read that file", Toast.LENGTH_LONG).show();
         }
-    }
-
-    /** Complete data export for the Oguri Hub migration (schema 1). */
-    private String buildExportJson() throws Exception {
-        org.json.JSONObject root = new org.json.JSONObject();
-        root.put("app", "app.oguri.steps");
-        root.put("schema", 1);
-        java.text.SimpleDateFormat fmt = new java.text.SimpleDateFormat(
-                "yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.US);
-        fmt.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
-        root.put("exportedAt", fmt.format(new java.util.Date()));
-        root.put("appVersion", "1.2.5");
-        org.json.JSONArray hist = new org.json.JSONArray();
-        for (java.util.Map.Entry<String, Integer> e : store.history().entrySet()) {
-            org.json.JSONObject day = new org.json.JSONObject();
-            day.put("date", e.getKey());
-            day.put("steps", e.getValue().intValue());
-            hist.put(day);
-        }
-        root.put("history", hist);
-        org.json.JSONObject settings = new org.json.JSONObject();
-        settings.put("paused", store.paused());
-        root.put("settings", settings);
-        org.json.JSONObject counting = new org.json.JSONObject();
-        counting.put("lastRaw", store.lastRaw());
-        root.put("counting", counting);
-        return root.toString(2);
     }
 
     @Override
@@ -373,18 +328,6 @@ public class MainActivity extends Activity {
                         i.putExtra(Intent.EXTRA_SUBJECT, "Oguri's Steps history");
                         i.putExtra(Intent.EXTRA_TEXT, store.toCsv());
                         startActivity(Intent.createChooser(i, "Export history"));
-                    }
-                }, "Export"));
-        setup.addView(setupRow("Export data (JSON)",
-                "Save the complete history and settings as JSON, "
-                        + "for importing into Oguri Hub.",
-                new View.OnClickListener() {
-                    @Override public void onClick(View v) {
-                        Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                        i.addCategory(Intent.CATEGORY_OPENABLE);
-                        i.setType("application/json");
-                        i.putExtra(Intent.EXTRA_TITLE, "oguris-steps-export.json");
-                        startActivityForResult(i, REQ_EXPORT_JSON);
                     }
                 }, "Export"));
         setup.addView(setupRow("Import history",

@@ -126,11 +126,6 @@ public class StepStore {
         return map.get(today);
     }
 
-    /** Last raw hardware counter value seen; -1 = no baseline. */
-    public long lastRaw() {
-        return prefs.getLong(KEY_LAST_RAW, -1L);
-    }
-
     public boolean paused() {
         return prefs.getBoolean(KEY_PAUSED, false);
     }
